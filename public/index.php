@@ -17,12 +17,18 @@ use smalls\app\controller\WatermarkController;
  * 只是很简单的操作，而且我们网站的根目录要设置到public里面，防止vendor、app直接暴露导致程序遭到非法攻击
  */
 $url = $_POST['url'];
-//$_POST | $_GET
-//这边要进行$url逻辑判断，判断是否是url地址等等，而且不能含有中文、违规的标点符号、表情等等
+$url = getJustUrl($url);
 if ($url == '') {
-    $url = 'https://v.kuaishou.com/8qIlZu';
+    $url = 'https://v.douyin.com/k3Jevf43/';
 }
 $watermarkObj = new WatermarkController();
 $result       = $watermarkObj->parseVideo($url);
 
 echo json_encode($result);
+
+function getJustUrl($inUrlText)
+{
+    $parttern = "/http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+/";
+    preg_match($parttern, $inUrlText, $match);
+    return count($match) > 0 ? $match[0] : '';
+}

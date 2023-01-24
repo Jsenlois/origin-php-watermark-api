@@ -37,20 +37,10 @@ class DouYinLogic extends Base
 
     public function setContents()
     {
-        $contents = $this->get('https://www.iesdouyin.com/web/api/v2/aweme/iteminfo', [
-            'item_ids' => $this->itemId,
-        ], [
-            'User-Agent' => UserGentType::ANDROID_USER_AGENT,
-            'Referer'    => "https://www.iesdouyin.com",
-            'Host'       => "www.iesdouyin.com",
-        ]);
-        if ((isset($contents['status_code']) && $contents['status_code'] != 0) || empty($contents['item_list'][0]['video']['play_addr']['uri'])) {
-            throw new ErrorVideoException("parsing failed");
+        $this->parseContentsByV1();
+        if($this->contents == '') {
+            $this->parseContentsByV2();
         }
-        if (empty($contents['item_list'][0])) {
-            throw new ErrorVideoException("不存在item_list无法获取视频信息");
-        }
-        $this->contents = $contents;
     }
 
     /**
@@ -82,13 +72,17 @@ class DouYinLogic extends Base
         if (empty($this->contents['item_list'][0]['video']['play_addr']['uri'])) {
             return '';
         }
-        return $this->redirects('https://aweme.snssdk.com/aweme/v1/play/', [
-            'video_id' => $this->contents['item_list'][0]['video']['play_addr']['uri'],
-            'ratio'    => '720',
-            'line'     => '0',
-        ], [
-            'User-Agent' => UserGentType::ANDROID_USER_AGENT,
-        ]);
+        if( strstr($this->contents['item_list'][0]['video']['play_addr']['uri'],'playwm')) {
+            return $this->redirects('https://aweme.snssdk.com/aweme/v1/play/', [
+                'video_id' => $this->contents['item_list'][0]['video']['play_addr']['uri'],
+                'ratio' => '720',
+                'line' => '0',
+            ], [
+                'User-Agent' => UserGentType::ANDROID_USER_AGENT,
+            ]);
+        } else {
+            return $this->contents['item_list'][0]['video']['play_addr']['uri'];
+        }
     }
 
     public function getVideoImage()
@@ -111,4 +105,60 @@ class DouYinLogic extends Base
         return CommonUtil::getData($this->contents['item_list'][0]['author']['avatar_larger']['url_list'][0]);
     }
 
+    private function parseContentsByV1() {
+
+        $contents = $this->get('https://www.iesdouyin.com/aweme/v1/web/aweme/detail', [
+            'aweme_id' => $this->itemId,
+        ], [
+            'User-Agent' => UserGentType::ANDROID_USER_AGENT,
+            'Referer'    => "https://www.iesdouyin.com",
+            'Host'       => "www.iesdouyin.com",
+        ]);
+        if ((isset($contents['status_code']) && $contents['status_code'] != 0) || empty($contents['aweme_detail']['video']['play_addr']['url_list'])) {
+            throw new ErrorVideoException("parsing failed");
+        }
+
+        $this->contents = [
+            'item_list' => [
+                [
+                    'video' => [
+                        'play_addr' => [
+                            'uri' => $contents['aweme_detail']['video']['play_addr']['url_list'][0]
+                        ],
+                        'cover' => [
+                            'url_list' => [
+                                $contents['aweme_detail']['video']['origin_cover']['url_list'][0]
+                            ]
+                        ]
+                    ],
+                    'desc' => $contents['aweme_detail']['desc'],
+                    'author' => [
+                        'nickname' => $contents['aweme_detail']['author']['nickname'],
+                        'avatar_larger' => [
+                            'url_list' => [
+                                $contents['aweme_detail']['music']['avatar_large']['url_list'][0]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    private function parseContentsByV2() {
+        $contents = $this->get('https://www.iesdouyin.com/web/api/v2/aweme/iteminfo', [
+            'item_ids' => $this->itemId,
+        ], [
+            'User-Agent' => UserGentType::ANDROID_USER_AGENT,
+            'Referer'    => "https://www.iesdouyin.com",
+            'Host'       => "www.iesdouyin.com",
+        ]);
+        if ((isset($contents['status_code']) && $contents['status_code'] != 0) || empty($contents['item_list'][0]['video']['play_addr']['uri'])) {
+            throw new ErrorVideoException("parsing failed");
+        }
+        if (empty($contents['item_list'][0])) {
+            throw new ErrorVideoException("不存在item_list无法获取视频信息");
+        }
+        $this->contents = $contents;
+    }
 }
