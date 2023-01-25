@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <title>amis demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="stylesheet" href="sdk/sdk.css" />
+    <link rel="stylesheet" href="sdk/helper.css" />
+    <link rel="stylesheet" href="sdk/iconfont.css" />
+    <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
+    <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
+    <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
+    <!-- 不过 amis 开发团队几乎没测试过 IE 11 下的效果，所以可能有细节功能用不了，如果发现请报 issue -->
+    <style>
+        html,
+        body,
+        .app-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="root" class="app-wrapper"></div>
+<script src="sdk/sdk.js"></script>
+<script type="text/javascript">
+    (function () {
+        let amis = amisRequire('amis/embed');
+        // 通过替换下面这个配置来生成不同页面
+        let amisJSON = {
+            "type": "page",
+            "title": "短视频去水印",
+            "body": [
+                {
+                    "type": "form",
+                    "title": "素材提取",
+                    "body": [
+                        {
+                            "label": "",
+                            "type": "input-text",
+                            "name": "originUrl",
+                            "id": "u:8f38175b282e",
+                            "required": true,
+                            "placeholder": "输入链接，如抖音分享链接或者口令"
+                        }
+                    ],
+                    "id": "u:bbf6fd15eef8",
+                    "autoFocus": true,
+                    "api": {
+                        "url": "",
+                        "method": "get",
+                        "messages": {},
+                        "dataType": "form"
+                    },
+                    "messages": {
+                        "fetchFailed": "初始化失败",
+                        "saveSuccess": "保存成功",
+                        "saveFailed": "保存失败",
+                        "fetchSuccess": ""
+                    },
+                    "name": "mForm",
+                    "target": "videoParseService?originUrl=${originUrl}"
+                },
+                {
+                    "type": "divider",
+                    "id": "u:c17f5e3d488e"
+                },
+                {
+                    "type": "tabs",
+                    "name": "videoParseTabs",
+                    "id": "u:6eb1307364f0",
+                    "tabs": [
+                        {
+                            "title": "原视频",
+                            "body": [
+                                {
+                                    "type": "service",
+                                    "initFetch": false,
+                                    "id": "u:8b7dcde06679",
+                                    "body": [
+                                        {
+                                            "type": "iframe",
+                                            "src": "${video_url}",
+                                            "id": "u:9d828454a121",
+                                            "allow": "*",
+                                            "referrerpolicy": "no-referrer"
+                                        }
+                                    ],
+                                    "messages": {},
+                                    "name": "videoParseService",
+                                    "api": {
+                                        "url": "https://682091g29x.goho.co/origin-php-watermark-api/public/index.php",
+                                        "method": "post",
+                                        "messages": {},
+                                        "dataType": "form",
+                                        "data": {
+                                            "data": "${originUrl}"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "title": "高清封面",
+                            "body": [
+                                {
+                                    "type": "image",
+                                    "src": "${img_url}",
+                                    "imageMode": "original",
+                                    "enlargeAble": true,
+                                    "id": "u:65d62f6513b4"
+                                }
+                            ]
+                        },
+                        {
+                            "title": "文案",
+                            "body": [
+                                {
+                                    "type": "tpl",
+                                    "tpl": "${desc}",
+                                    "inline": false,
+                                    "id": "u:cb40e5f99160"
+                                }
+                            ]
+                        }
+                    ],
+                    "tabsMode": "simple"
+                }
+            ],
+            "id": "u:5924f3fdc45f",
+            "pullRefresh": {
+                "disabled": true
+            },
+            "regions": [
+                "header",
+                "body"
+            ],
+            "style": {
+                "backgroundColor": ""
+            }
+        };
+
+        let amisScoped = amis.embed('#root', amisJSON);
+    })();
+</script>
+</body>
+</html>

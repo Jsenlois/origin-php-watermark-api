@@ -105,6 +105,10 @@ class DouYinLogic extends Base
         return CommonUtil::getData($this->contents['item_list'][0]['author']['avatar_larger']['url_list'][0]);
     }
 
+    public function getMusicInfo() {
+        return CommonUtil::getData($this->contents['item_list'][0]['music']);
+    }
+
     private function parseContentsByV1() {
 
         $contents = $this->get('https://www.iesdouyin.com/aweme/v1/web/aweme/detail', [
@@ -117,7 +121,6 @@ class DouYinLogic extends Base
         if ((isset($contents['status_code']) && $contents['status_code'] != 0) || empty($contents['aweme_detail']['video']['play_addr']['url_list'])) {
             throw new ErrorVideoException("parsing failed");
         }
-
         $this->contents = [
             'item_list' => [
                 [
@@ -139,6 +142,11 @@ class DouYinLogic extends Base
                                 $contents['aweme_detail']['music']['avatar_large']['url_list'][0]
                             ]
                         ]
+                    ],
+                    "music" => [
+                        "album" => $contents['aweme_detail']['music']['album'],
+                        "author" => $contents['aweme_detail']['music']['author'],
+                        "play_url" => $contents['aweme_detail']['music']['play_url']['url_list'][0]
                     ]
                 ]
             ]
@@ -161,4 +169,6 @@ class DouYinLogic extends Base
         }
         $this->contents = $contents;
     }
+
+
 }

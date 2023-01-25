@@ -92,7 +92,7 @@ class Base extends Common
      * @param string $type
      * @return array
      */
-    protected function returnData(string $url, string $userName, string $userHeadPic, string $desc, string $videoImage, string $videoUrl, string $type): array
+    protected function returnData(string $url, string $userName, string $userHeadPic, string $desc, string $videoImage, string $videoUrl, string $type, $music = []): array
     {
         return [
             'md5'           => md5($url),
@@ -102,7 +102,10 @@ class Base extends Common
             'desc'          => $desc,
             'img_url'       => $videoImage,
             'video_url'     => $videoUrl,
-            'type'          => $type
+            'type'          => $type,
+            'music_album'   => $music['album'],
+            'music_author'  => $music['author'],
+            'music_play_url'=> $music['play_url']
         ];
     }
 
@@ -119,7 +122,8 @@ class Base extends Common
             $this->logic->getVideoDesc(),
             $this->logic->getVideoImage(),
             $this->logic->getVideoUrl(),
-            'video'
+            'video',
+            $this->logic->getMusicInfo()
         );
     }
 
