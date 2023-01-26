@@ -119,7 +119,7 @@ class DouYinLogic extends Base
             'Host'       => "www.iesdouyin.com",
         ]);
         if ((isset($contents['status_code']) && $contents['status_code'] != 0) || empty($contents['aweme_detail']['video']['play_addr']['url_list'])) {
-            throw new ErrorVideoException("parsing failed");
+            return;
         }
         $this->contents = [
             'item_list' => [
