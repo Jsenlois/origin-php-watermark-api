@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8" />
-    <title>amis demo</title>
+    <title>短视频去水印</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta
             name="viewport"
@@ -72,7 +72,8 @@
                 },
                 {
                     "type": "divider",
-                    "id": "u:c17f5e3d488e"
+                    "id": "u:bbb747b1c3fc",
+                    "className": "m-l-xs m-b-xs m-t-xs m-r-xs m-xs b-white"
                 },
                 {
                     "type": "tabs",
@@ -91,13 +92,45 @@
                                             "type": "video",
                                             "src": "${video_url}",
                                             "poster": "${img_url}",
-                                            "autoPlay": false
+                                            "autoPlay": false,
+                                            "id": "u:9dc9375029d1",
+                                            "className": "m-b"
+                                        },
+                                        {
+                                            "type": "button-toolbar",
+                                            "buttons": [
+                                                {
+                                                    "type": "button",
+                                                    "label": "点击复制",
+                                                    "id": "u:6bb641b604e5",
+                                                    "size": "md",
+                                                    "level": "light",
+                                                    "actionType": "copy",
+                                                    "content": "${video_url}"
+                                                },
+                                                {
+                                                    "type": "action",
+                                                    "id": "u:91686fc8d25e",
+                                                    "label": "点击下载",
+                                                    "actionType": "download",
+                                                    "api": {
+                                                        "method": "get",
+                                                        "url": "/api.php",
+                                                        "data": {
+                                                            "output": "download",
+                                                            "url": "${video_url}"
+                                                        }
+                                                    },
+                                                    "size": "md",
+                                                    "level": "primary"
+                                                }
+                                            ]
                                         }
                                     ],
                                     "messages": {},
                                     "name": "videoParseService",
                                     "api": {
-                                        "url": "https://682091g29x.goho.co/wm/public/index.php",
+                                        "url": "/api.php",
                                         "method": "post",
                                         "messages": {},
                                         "dataType": "form",
@@ -106,7 +139,8 @@
                                         }
                                     }
                                 }
-                            ]
+                            ],
+                            "id": "u:e88a7d711f5f"
                         },
                         {
                             "title": "高清封面",
