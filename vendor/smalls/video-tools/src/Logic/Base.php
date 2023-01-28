@@ -113,4 +113,11 @@ class Base
         $this->url = $url;
     }
 
+    public function getMusicInfo() {
+        return [];
+    }
+
+    public function getVideoDynamicImage() {
+        return '';
+    }
 }

@@ -22,7 +22,15 @@ class TouTiaoLogic extends Base
 
     public function setItemId()
     {
-        preg_match('/a([0-9]+)\/?/i', $this->url, $match);
+        //[https://m.toutiao.com/is/B1Y6ak7/](https://m.toutiao.com/is/B1Y6ak7/)
+        if(strpos($this->url, "toutiao.com")) {
+            $url = $this->redirects($this->url, [], [
+                'User-Agent' => UserGentType::ANDROID_USER_AGENT,
+            ]);
+            preg_match('/video\/([0-9]+)\//i', $url, $match);
+        } else {
+            preg_match('/a([0-9]+)\/?/i', $this->url, $match);
+        }
         if (CommonUtil::checkEmptyMatch($match)) {
             throw new ErrorVideoException("获取不到item_id参数信息");
         }
@@ -32,17 +40,17 @@ class TouTiaoLogic extends Base
     public function setContents()
     {
         $getContentUrl = 'https://m.365yg.com/i' . $this->itemId . '/info/';
-
         $contents = $this->get($getContentUrl, ['i' => $this->itemId], [
             'Referer'    => $getContentUrl,
             'User-Agent' => UserGentType::ANDROID_USER_AGENT
         ]);
-
         if (empty($contents['data']['video_id'])) {
             throw new ErrorVideoException("获取不到指定的内容信息");
         }
         $this->contents = $contents;
     }
+
+
 
     /**
      * @return mixed
@@ -73,6 +81,16 @@ class TouTiaoLogic extends Base
         if (empty($this->contents['data']['video_id'])) {
             return '';
         }
+
+        if(strpos($this->url, "toutiao.com")) {
+            $getContentUrl = 'http://i.snssdk.com/video/urls/1/toutiao/mp4/'.$this->contents['data']['video_id'];
+            $contents = $this->get($getContentUrl, [], [
+                'Referer'    => $getContentUrl,
+                'User-Agent' => UserGentType::ANDROID_USER_AGENT
+            ]);
+            return base64_decode($contents['data']['video_list']['video_1']['main_url']);
+        }
+
         return $this->redirects('http://hotsoon.snssdk.com/hotsoon/item/video/_playback/', [
             'video_id' => $this->contents['data']['video_id'],
         ], [
@@ -99,5 +117,4 @@ class TouTiaoLogic extends Base
     {
         return isset($this->contents['data']['media_user']['avatar_url']) ? $this->contents['data']['media_user']['avatar_url'] : '';
     }
-
 }

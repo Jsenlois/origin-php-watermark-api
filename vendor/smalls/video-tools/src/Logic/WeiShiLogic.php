@@ -22,7 +22,8 @@ class WeiShiLogic extends Base
 
     public function setFeedId()
     {
-        preg_match('/feed\/(.*?)\/wsfeed/i', $this->url, $match);
+        //https://isee.weishi.qq.com/ws/app-pages/share/index.html?wxplay=1&id=7jHcjnrq01PgeCvsy&spid=4111219036352816865&qua=v1_and_weishi_8.88.0_588_312027000_d&chid=100081014&pkg=3670&attach=cp_reserves3_1000370011
+        preg_match('/&id=(.*?)&/', $this->url, $match);
         if (CommonUtil::checkEmptyMatch($match)) {
             throw new ErrorVideoException("feed_id参数获取失败");
         }
@@ -31,11 +32,13 @@ class WeiShiLogic extends Base
 
     public function setContents()
     {
+        echo($this->feedId);
         $contents       = $this->post('https://h5.qzone.qq.com/webapp/json/weishi/WSH5GetPlayPage?t=0.4185745904612037&g_tk=', [
-            'feedid' => $this->feedId,
+            'feedId' => $this->feedId,
         ], [
             'User-Agent' => UserGentType::ANDROID_USER_AGENT
         ]);
+        echo (json_encode($contents));
         $this->contents = $contents;
     }
 

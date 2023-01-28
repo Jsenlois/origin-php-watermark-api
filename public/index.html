@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8" />
-    <title>短视频去水印</title>
+    <title>工具鸭🦆</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta
             name="viewport"
@@ -38,11 +38,11 @@
         // 通过替换下面这个配置来生成不同页面
         let amisJSON = {
             "type": "page",
-            "title": "短视频去水印",
+            "title": "工具鸭🦆-短视频去水印",
             "body": [
                 {
                     "type": "form",
-                    "title": "素材提取",
+                    "title": "素材输入",
                     "body": [
                         {
                             "label": "",
@@ -50,7 +50,7 @@
                             "name": "originUrl",
                             "id": "u:8f38175b282e",
                             "required": true,
-                            "placeholder": "输入链接，如抖音分享链接或者口令"
+                            "placeholder": "输入素材，如抖音分享口令"
                         }
                     ],
                     "id": "u:bbf6fd15eef8",
@@ -58,7 +58,8 @@
                     "api": {
                         "url": "",
                         "method": "get",
-                        "messages": {},
+                        "messages": {
+                        },
                         "dataType": "form"
                     },
                     "messages": {
@@ -81,7 +82,7 @@
                     "id": "u:6eb1307364f0",
                     "tabs": [
                         {
-                            "title": "原视频",
+                            "title": "去水印视频",
                             "body": [
                                 {
                                     "type": "service",
@@ -124,15 +125,18 @@
                                                     "size": "md",
                                                     "level": "primary"
                                                 }
-                                            ]
+                                            ],
+                                            "id": "u:9c76d060414f"
                                         }
                                     ],
-                                    "messages": {},
+                                    "messages": {
+                                    },
                                     "name": "videoParseService",
                                     "api": {
                                         "url": "/api.php",
                                         "method": "post",
-                                        "messages": {},
+                                        "messages": {
+                                        },
                                         "dataType": "form",
                                         "data": {
                                             "data": "${originUrl}"
@@ -143,16 +147,33 @@
                             "id": "u:e88a7d711f5f"
                         },
                         {
-                            "title": "高清封面",
+                            "title": "音乐",
+                            "body": [
+                                {
+                                    "type": "audio",
+                                    "src": "${music_play_url}",
+                                    "id": "u:36621b3d6852"
+                                },
+                                {
+                                    "type": "tpl",
+                                    "tpl": "${music_album}-${music_author}",
+                                    "inline": false,
+                                    "id": "u:cb40e5f99160"
+                                }
+                            ],
+                            "id": "u:85f97c79de11"
+                        },
+                        {
+                            "title": "动态封面",
                             "body": [
                                 {
                                     "type": "image",
-                                    "src": "${img_url}",
-                                    "imageMode": "original",
-                                    "enlargeAble": true,
-                                    "id": "u:65d62f6513b4"
+                                    "id": "u:65d62f6513b4",
+                                    "src": "${dynamic_img_url}",
+                                    "imageMode": "original"
                                 }
-                            ]
+                            ],
+                            "id": "u:e99f28db3109"
                         },
                         {
                             "title": "文案",
@@ -163,22 +184,8 @@
                                     "inline": false,
                                     "id": "u:cb40e5f99160"
                                 }
-                            ]
-                        },
-                        {
-                            "title": "音乐",
-                            "body": [
-                                {
-                                    "type": "audio",
-                                    "src": "${music_play_url}"
-                                },
-                                {
-                                    "type": "tpl",
-                                    "tpl": "${music_album}-${music_author}",
-                                    "inline": false,
-                                    "id": "u:cb40e5f99160"
-                                }
-                            ]
+                            ],
+                            "id": "u:1b83632a12a2"
                         }
                     ],
                     "tabsMode": "simple"
@@ -189,8 +196,8 @@
                 "disabled": true
             },
             "regions": [
-                "header",
-                "body"
+                "body",
+                "header"
             ],
             "style": {
                 "backgroundColor": ""

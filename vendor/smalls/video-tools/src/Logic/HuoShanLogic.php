@@ -41,7 +41,6 @@ class HuoShanLogic extends Base
         ], [
             'User-Agent' => UserGentType::ANDROID_USER_AGENT,
         ]);
-
         if ((isset($contents['status_code']) && $contents['status_code'] != 0) || (isset($contents['data']) && $contents['data'] == null)) {
             throw new ErrorVideoException("获取不到指定的内容信息");
         }
@@ -65,14 +64,13 @@ class HuoShanLogic extends Base
         }
         parse_str($parseUrl['query'], $parseArr);
         $parseArr['watermark'] = 0;
-
-        $videoUrl = $this->redirects('https://api.huoshan.com/hotsoon/item/video/_source/', $parseArr, [
+        $redirectVideoUrl = $this->redirects('https://api.huoshan.com/hotsoon/item/video/_source/', $parseArr, [
             'User-Agent' => UserGentType::ANDROID_USER_AGENT,
         ]);
-        if (!$videoUrl) {
-            return '';
+        if (!$redirectVideoUrl) {
+            return $videoUrl;
         }
-        return $videoUrl;
+        return $redirectVideoUrl;
     }
 
     public function getVideoImage()

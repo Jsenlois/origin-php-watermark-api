@@ -43,7 +43,6 @@ class PiPiXiaLogic extends Base
             'Referer'    => $newGetContentsUrl,
             'User-Agent' => UserGentType::ANDROID_USER_AGENT
         ]);
-
         if (empty($contents['data']['item'])) {
             throw new ErrorVideoException("获取不到指定的内容信息");
         }
@@ -76,7 +75,7 @@ class PiPiXiaLogic extends Base
 
     public function getVideoUrl()
     {
-        return isset($this->contents['data']['item']['video']['video_fallback']['url_list'][0]['url']) ? $this->contents['data']['item']['video']['video_fallback']['url_list'][0]['url'] : '';
+        return isset($this->contents['data']['item']['video']['video_download']['url_list'][0]['url']) ? $this->contents['data']['item']['video']['video_download']['url_list'][0]['url'] : '';
     }
 
 

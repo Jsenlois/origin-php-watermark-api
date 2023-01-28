@@ -37,6 +37,7 @@ class KuaiShouLogic extends Base
         $contents    = $this->post('http://api.gifshow.com/rest/n/tokenShare/info/byText', $data, [
             'User-Agent' => 'kwai-android',
         ]);
+        echo(json_encode($contents));
         if (isset($contents['result']) && $contents['result'] != 1) {
             throw new ErrorVideoException($contents['error_msg']);
         }

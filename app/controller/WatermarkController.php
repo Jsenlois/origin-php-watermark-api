@@ -27,15 +27,15 @@ class WatermarkController
                 $result = VideoManager::MeiPai()->start($url);
             } elseif (strpos($url, "immomo.com")) {
                 $result = VideoManager::MoMo()->start($url);
-            } elseif (strpos($url, "ippzone.com")) {
+            } elseif (strpos($url, "ippzone.com") || strpos($url,"pipigx.com")) {
                 $result = VideoManager::PiPiGaoXiao()->start($url);
-            } elseif (strpos($url, "pipix.com")) {
+            } elseif (strpos($url, "pipix.com") ) {
                 $result = VideoManager::PiPiXia()->start($url);
             } elseif (strpos($url, "longxia.music.xiaomi.com")) {
                 $result = VideoManager::QuanMingGaoXiao()->start($url);
             } elseif (strpos($url, "shua8cn.com")) {
                 $result = VideoManager::ShuaBao()->start($url);
-            } elseif (strpos($url, "toutiaoimg.com") || strpos($url, "toutiaoimg.cn")) {
+            } elseif (strpos($url, "toutiaoimg.com") || strpos($url, "toutiaoimg.cn") || strpos($url, "toutiao.com")) {
                 $result = VideoManager::TouTiao()->start($url);
             } elseif (strpos($url, "weishi.qq.com")) {
                 $result = VideoManager::WeiShi()->start($url);
@@ -45,7 +45,12 @@ class WatermarkController
                 $result = VideoManager::XiGua()->start($url);
             } elseif (strpos($url, "izuiyou.com")) {
                 $result = VideoManager::ZuiYou()->start($url);
-            } else {
+            } elseif (strpos($url, "b23.tv")) {
+                $result = VideoManager::Bili()->start($url);
+            } elseif (strpos($url, "weibo.cn")) {
+                $result = VideoManager::WeiBo()->start($url);
+            }
+            else {
                 return [
                     'status'  => false,
                     'data' => '您输入的链接错误！'

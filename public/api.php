@@ -16,6 +16,20 @@ use smalls\app\controller\WatermarkController;
 $fileNameMap = [
     'video/mp4' => "video.mp4",
 ];
+$debugUrl = [
+    'douyin'=>'https://v.douyin.com/k3FAT8D/',
+    'huoshan' => 'https://share.huoshan.com/hotsoon/s/U4ZOtvklnz8/',
+    'toutiao'=>'https://m.toutiao.com/is/B1Y6ak7/',
+    'kuaishou'=>'https://v.kuaishou.com/Jtf8rr',
+    'lsp' => 'https://www.pearvideo.com/detail_1777629?st=7',
+    'meipai'=>'http://www.meipai.com/video/676/7014896128064769016?client_id=1089857302&utm_media_id=7014896128064769016&utm_source=meipai_share&utm_term=meipai_android&gnum=2882924031&utm_content=9457&utm_share_type=3',
+    'ppgx'=>'https://h5.pipigx.com/pp/post/710734416345?zy_to=copy_link&share_count=1&m=18240bb6450e4f0f06477b14471ab5c6&app=&type=post&did=92aa19b72d41d2fa&mid=8104200827611&pid=710734416345',
+    'ppx'=>'https://h5.pipix.com/s/ko7RnJD/',
+    'weishi'=>'https://isee.weishi.qq.com/ws/app-pages/share/index.html?wxplay=1&id=7jHcjnrq01PgeCvsy&spid=4111219036352816865&qua=v1_and_weishi_8.88.0_588_312027000_d&chid=100081014&pkg=3670&attach=cp_reserves3_1000370011',
+    'bz'=>'https://b23.tv/Ws7DFzw',
+    'wb'=>'https://m.weibo.cn/6403692491/4862604331189245',
+    'tb'=>'https://m.tb.cn/h.Um0RIEN?tk=tq3hdgq64jZ'
+];
 /**
  * @Author Smalls
  * 我这边做了很简单的一些制作
@@ -34,7 +48,7 @@ if ($output == "download") {
     $data = $_POST['data'];
     $url = getJustUrl($data);
     if ($url == '') {
-        $url = 'https://v.douyin.com/k3FAT8D/';
+        $url = $debugUrl[$_GET['dp']];
     }
     $watermarkObj = new WatermarkController();
     $result = $watermarkObj->parseVideo($url);

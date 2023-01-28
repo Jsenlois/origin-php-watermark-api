@@ -90,6 +90,11 @@ class DouYinLogic extends Base
         return CommonUtil::getData($this->contents['item_list'][0]['video']['cover']['url_list'][0]);
     }
 
+    public function getVideoDynamicImage()
+    {
+        return CommonUtil::getData($this->contents['item_list'][0]['video']['cover']['url_list'][1]);
+    }
+
     public function getVideoDesc()
     {
         return CommonUtil::getData($this->contents['item_list'][0]['desc']);
@@ -130,7 +135,8 @@ class DouYinLogic extends Base
                         ],
                         'cover' => [
                             'url_list' => [
-                                $contents['aweme_detail']['video']['origin_cover']['url_list'][0]
+                                $contents['aweme_detail']['video']['origin_cover']['url_list'][0],
+                                $contents['aweme_detail']['video']['dynamic_cover']['url_list'][0],
                             ]
                         ]
                     ],
