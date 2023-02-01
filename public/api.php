@@ -112,3 +112,38 @@ function MyRequest($url, $header, $type, $data, $DataType, $HeaderType = "PC")
     );
     return $ReturnArr;
 }
+
+function kuaishou($url) {
+    $locs = get_headers($url, true) ['Location'];
+    preg_match('/photoId=(.*?)\&/', $locs, $matches);
+    $headers = array('Cookie: did=web_985111db253c4bc289ebb2c9361e6c3ad; didv=167488',
+        'Referer: ' . $locs, 'Content-Type: application/json');
+    $post_data = '{"photoId": "' . str_replace(['video/', '?'], '', $matches[1]) . '","isLongVideo": false}';
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, 'https://v.m.chenzhongtech.com/rest/wd/photo/info');
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_NOBODY, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLINFO_HEADER_OUT, TRUE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
+    $data = curl_exec($curl);
+    curl_close($curl);
+    $json = json_decode($data, true);
+    if ($json) {
+        $arr = [
+            'code' => 200,
+            'msg' => '解析成功',
+            'data' => [
+                'avatar' => $json['photo']['headUrl'],
+                'author' => $json['photo']['userName'],
+                'time' => $json['photo']['timestamp'],
+                'title' => $json['photo']['caption'],
+                'cover' => $json['photo']['coverUrls'][key($json['photo']['coverUrls']) ]['url'],
+                'url' => $json['photo']['mainMvUrls'][key($json['photo']['mainMvUrls']) ]['url'],
+            ]
+        ];
+        return $arr;
+    }
+}

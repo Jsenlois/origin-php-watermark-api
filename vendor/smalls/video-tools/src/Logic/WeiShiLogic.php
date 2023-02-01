@@ -32,14 +32,50 @@ class WeiShiLogic extends Base
 
     public function setContents()
     {
-        echo($this->feedId);
-        $contents       = $this->post('https://h5.qzone.qq.com/webapp/json/weishi/WSH5GetPlayPage?t=0.4185745904612037&g_tk=', [
-            'feedId' => $this->feedId,
-        ], [
-            'User-Agent' => UserGentType::ANDROID_USER_AGENT
-        ]);
-        echo (json_encode($contents));
-        $this->contents = $contents;
+        $contents = $this->weishi($this->url);
+        $this->contents = $contents['data'];
+    }
+
+    function weishi($url) {
+        //&id=7jHcjnrq01PgeCvsy&
+        preg_match('/&id=(.*?)&/', $url, $id);
+        if (strpos($url, 'h5.weishi') != false) {
+            $arr = json_decode($this->curl('https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid=' . $id[1]), true);
+        } else {
+            $arr = json_decode($this->curl('https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid=' . $id[1]), true);
+        }
+        $video_url = $arr['data']['feeds'][0]['video_url'];
+        if ($video_url) {
+            $arr = [
+                'code' => 200,
+                'msg' => '解析成功',
+                'data' => [
+                    'author' => $arr['data']['feeds'][0]['poster']['nick'],
+                    'avatar' => $arr['data']['feeds'][0]['poster']['avatar'],
+                    'time' => $arr['data']['feeds'][0]['poster']['createtime'],
+                    'title' => $arr['data']['feeds'][0]['feed_desc_withat'],
+                    'cover' => $arr['data']['feeds'][0]['images'][0]['url'],
+                    'url' => $video_url
+                ]
+            ];
+            return $arr;
+        }
+    }
+
+    private function curl($url, $headers = []) {
+        $header = ['User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'];
+        $con = curl_init((string)$url);
+        curl_setopt($con, CURLOPT_HEADER, false);
+        curl_setopt($con, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($con, CURLOPT_RETURNTRANSFER, true);
+        if (!empty($headers)) {
+            curl_setopt($con, CURLOPT_HTTPHEADER, $headers);
+        } else {
+            curl_setopt($con, CURLOPT_HTTPHEADER, $header);
+        }
+        curl_setopt($con, CURLOPT_TIMEOUT, 5000);
+        $result = curl_exec($con);
+        return $result;
     }
 
     /**
@@ -66,30 +102,30 @@ class WeiShiLogic extends Base
         return $this->url;
     }
 
-    public function getVideoUrl()
+    public function getUserPic()
     {
-        return isset($this->contents['data']['feeds'][0]['video_url']) ? $this->contents['data']['feeds'][0]['video_url'] : '';
+        return '';
     }
 
+    public function getVideoUrl()
+    {
+        return $this->contents['url'];
+    }
 
     public function getVideoImage()
     {
-        return isset($this->contents['data']['feeds'][0]['images'][0]['url']) ? $this->contents['data']['feeds'][0]['images'][0]['url'] : '';
+        return $this->contents['cover'];
     }
 
     public function getVideoDesc()
     {
-        return isset($this->contents['data']['feeds'][0]['share_info']['body_map'][0]['desc']) ? $this->contents['data']['feeds'][0]['share_info']['body_map'][0]['desc'] : '';
+        return $this->contents['title'];
     }
 
     public function getUsername()
     {
-        return isset($this->contents['data']['feeds'][0]['poster']['nick']) ? $this->contents['data']['feeds'][0]['poster']['nick'] : '';
-    }
+        return $this->contents['author'];
 
-    public function getUserPic()
-    {
-        return isset($this->contents['data']['feeds'][0]['poster']['avatar']) ? $this->contents['data']['feeds'][0]['poster']['avatar'] : '';
     }
 
 

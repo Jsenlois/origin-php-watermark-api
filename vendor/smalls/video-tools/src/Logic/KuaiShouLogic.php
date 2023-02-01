@@ -21,27 +21,11 @@ class KuaiShouLogic extends Base
      */
     public function setContents()
     {
-        $data = [
-            'client_key' => '3c2cd3f3',
-            'shareText'  => $this->url,
-            'appver'     => '6.9.2.11245',
-            'did'        => 'ANDROID_c45e742737e8' . rand(1000, 9999),
-        ];
-        $salt = "382700b563f4";
-        ksort($data);
-        $str         = http_build_query($data);
-        $str         = urldecode($str);
-        $str         = str_replace('&', '', $str) . $salt;
-        $md5         = md5($str);
-        $data['sig'] = $md5;
-        $contents    = $this->post('http://api.gifshow.com/rest/n/tokenShare/info/byText', $data, [
-            'User-Agent' => 'kwai-android',
-        ]);
-        echo(json_encode($contents));
-        if (isset($contents['result']) && $contents['result'] != 1) {
+        $contents = $this->kuaishou($this->url);
+        if (isset($contents['code']) && $contents['code'] != 200) {
             throw new ErrorVideoException($contents['error_msg']);
         }
-        $this->contents = $contents;
+        $this->contents = $contents['data'];
     }
 
     /**
@@ -62,30 +46,64 @@ class KuaiShouLogic extends Base
 
     public function getVideoUrl()
     {
-        return isset($this->contents['shareTokenDialog']['feed']['main_mv_urls'][0]['url']) ? $this->contents['shareTokenDialog']['feed']['main_mv_urls'][0]['url'] : '';
+        return $this->contents['url'];
     }
 
     public function getVideoImage()
     {
-        return isset($this->contents['shareTokenDialog']['feed']['cover_thumbnail_urls'][0]['url']) ? $this->contents['shareTokenDialog']['feed']['cover_thumbnail_urls'][0]['url'] : '';
+        return $this->contents['cover'];
     }
 
     public function getVideoDesc()
     {
-        return isset($this->contents['shareTokenDialog']['feed']['caption']) ? $this->contents['shareTokenDialog']['feed']['caption'] : '';
+        return $this->contents['title'];
     }
 
     public function getUsername()
     {
-        return isset($this->contents['shareTokenDialog']['feed']['user_name']) ? $this->contents['shareTokenDialog']['feed']['user_name'] : '';
+        return $this->contents['author'];
 
     }
 
     public function getUserPic()
     {
-        return isset($this->contents['shareTokenDialog']['feed']['headurls'][0]['url']) ? $this->contents['shareTokenDialog']['feed']['headurls'][0]['url'] : '';
+        return '';
 
     }
 
 
+    function kuaishou($url) {
+        $locs = get_headers($url, true) ['Location'];
+        preg_match('/photoId=(.*?)\&/', $locs, $matches);
+        $headers = array('Cookie: did=web_985111db253c4bc289ebb2c9361e6; didv=167488'.time(),
+            'Referer: ' . $locs, 'Content-Type: application/json');
+        $post_data = '{"photoId": "' . str_replace(['video/', '?'], '', $matches[1]) . '","isLongVideo": false}';
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://v.m.chenzhongtech.com/rest/wd/photo/info');
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_NOBODY, 0);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLINFO_HEADER_OUT, TRUE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
+        $data = curl_exec($curl);
+        curl_close($curl);
+        $json = json_decode($data, true);
+        if ($json) {
+            $arr = [
+                'code' => 200,
+                'msg' => '解析成功',
+                'data' => [
+                    'avatar' => $json['photo']['headUrl'],
+                    'author' => $json['photo']['userName'],
+                    'time' => $json['photo']['timestamp'],
+                    'title' => $json['photo']['caption'],
+                    'cover' => $json['photo']['coverUrls'][key($json['photo']['coverUrls']) ]['url'],
+                    'url' => $json['photo']['mainMvUrls'][key($json['photo']['mainMvUrls']) ]['url'],
+                ]
+            ];
+            return $arr;
+        }
+    }
 }

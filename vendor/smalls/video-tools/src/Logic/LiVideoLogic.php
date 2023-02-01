@@ -30,8 +30,7 @@ class LiVideoLogic extends Base
 
     public function setVideoUrl()
     {
-        preg_match('/srcUrl="(.*?)",/i', $this->contents, $videoMatches);
-
+        preg_match('/videoCenterId:"(.*?)",/ix', $this->contents, $videoMatches);
         if (CommonUtil::checkEmptyMatch($videoMatches)) {
             throw new ErrorVideoException("视频URL获取失败");
         }
