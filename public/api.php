@@ -49,6 +49,9 @@ if ($output == "download") {
     $url = getJustUrl($data);
     if ($url == '') {
         $url = $debugUrl[$_GET['dp']];
+        if($url == '') {
+            $url = $debugUrl[$data];
+        }
     }
     $watermarkObj = new WatermarkController();
     $result = $watermarkObj->parseVideo($url);
