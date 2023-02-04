@@ -21,7 +21,7 @@ $debugUrl = [
     'huoshan' => 'https://share.huoshan.com/hotsoon/s/U4ZOtvklnz8/',
     'toutiao'=>'https://m.toutiao.com/is/B1Y6ak7/',
     'kuaishou'=>'https://v.kuaishou.com/Jtf8rr',
-    'lsp' => 'https://www.pearvideo.com/detail_1777629?st=7',
+    'lsp' => 'https://www.pearvideo.com/video_1749838',
     'meipai'=>'http://www.meipai.com/video/676/7014896128064769016?client_id=1089857302&utm_media_id=7014896128064769016&utm_source=meipai_share&utm_term=meipai_android&gnum=2882924031&utm_content=9457&utm_share_type=3',
     'ppgx'=>'https://h5.pipigx.com/pp/post/710734416345?zy_to=copy_link&share_count=1&m=18240bb6450e4f0f06477b14471ab5c6&app=&type=post&did=92aa19b72d41d2fa&mid=8104200827611&pid=710734416345',
     'ppx'=>'https://h5.pipix.com/s/ko7RnJD/',
@@ -113,37 +113,3 @@ function MyRequest($url, $header, $type, $data, $DataType, $HeaderType = "PC")
     return $ReturnArr;
 }
 
-function kuaishou($url) {
-    $locs = get_headers($url, true) ['Location'];
-    preg_match('/photoId=(.*?)\&/', $locs, $matches);
-    $headers = array('Cookie: did=web_985111db253c4bc289ebb2c9361e6c3ad; didv=167488',
-        'Referer: ' . $locs, 'Content-Type: application/json');
-    $post_data = '{"photoId": "' . str_replace(['video/', '?'], '', $matches[1]) . '","isLongVideo": false}';
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, 'https://v.m.chenzhongtech.com/rest/wd/photo/info');
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl, CURLOPT_NOBODY, 0);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLINFO_HEADER_OUT, TRUE);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
-    $data = curl_exec($curl);
-    curl_close($curl);
-    $json = json_decode($data, true);
-    if ($json) {
-        $arr = [
-            'code' => 200,
-            'msg' => '解析成功',
-            'data' => [
-                'avatar' => $json['photo']['headUrl'],
-                'author' => $json['photo']['userName'],
-                'time' => $json['photo']['timestamp'],
-                'title' => $json['photo']['caption'],
-                'cover' => $json['photo']['coverUrls'][key($json['photo']['coverUrls']) ]['url'],
-                'url' => $json['photo']['mainMvUrls'][key($json['photo']['mainMvUrls']) ]['url'],
-            ]
-        ];
-        return $arr;
-    }
-}

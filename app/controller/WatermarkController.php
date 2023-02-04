@@ -49,6 +49,8 @@ class WatermarkController
                 $result = VideoManager::Bili()->start($url);
             } elseif (strpos($url, "weibo.cn")) {
                 $result = VideoManager::WeiBo()->start($url);
+            } elseif (strpos($url, 'tb.cn')) {
+                $result = VideoManager::TaoBao()->start($url);
             }
             else {
                 return [
